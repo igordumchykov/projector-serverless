@@ -1,0 +1,23 @@
+# package directories
+node_modules/
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# Webpack directories
+.webpack
+
+# misc
+.DS_Store
+.env/
+
+package-lock.json
+misc.xml
+react-aws-amlify.iml
+.idea
+.build
+coverage
+
+out/
+jest.config.js

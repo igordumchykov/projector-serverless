@@ -1,0 +1,5 @@
+Resources:
+  S3BucketJpeg:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${param:output-bucket}

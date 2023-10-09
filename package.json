@@ -1,0 +1,39 @@
+{
+  "name": "projector-serverless",
+  "version": "1.0.0",
+  "description": "Serverless",
+  "main": "out/handler.js",
+  "scripts": {
+    "test": "jest --silent --bail --coverage",
+    "lint": "eslint . --ext .ts --fix"
+  },
+  "author": "Igor Dumchykov",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.93",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1101.0",
+    "cache-loader": "^4.1.0",
+    "eslint": "^8.12.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "loader-utils": "^3.2.0",
+    "node": "^17.7.1",
+    "nodemon": "^2.0.15",
+    "prettier": "2.6.1",
+    "serverless": "^3.10.0",
+    "serverless-plugin-tracing": "^2.0.0",
+    "serverless-webpack": "^5.6.1",
+    "ts-loader": "^8.3",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "aws-xray-sdk": "^3.3.4",
+    "jimp": "^0.22.10"
+  }
+}

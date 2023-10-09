@@ -1,0 +1,8 @@
+default:
+  log-level: DEBUG
+  deployment-bucket: idumchykov-projector-serverless
+  input-bucket: idumchykov-input-files
+  output-bucket: idumchykov-output-files
+
+
+

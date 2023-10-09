@@ -1,0 +1,92 @@
+service: projector-serverless
+frameworkVersion: '3'
+useDotenv: true
+
+params: ${file(config/static/params.yml)}
+
+custom:
+  account: ${param:account, 'projector'}
+
+provider:
+  profile: projector
+#  cfnRole: arn:aws:iam::168860074409:role/SERVICEROLECFT
+  name: aws
+  runtime: nodejs18.x
+  stage: ${sls:stage}
+  region: ${param:region, 'eu-central-1'}
+  versionFunctions: false
+  memorySize: 256
+  timeout: 29
+  tracing:
+    lambda: true
+  logs:
+    restApi:
+      accessLogging: true
+      format: '{
+                  "_time": "$context.requestTime",
+                  "stage" : "$context.stage",
+                  "requestId":"$context.requestId",
+                  "api_id" : "$context.apiId",
+                  "resource_id" : "$context.resourceId",
+                  "http_method" : "$context.httpMethod",
+                  "source_ip" : "$context.identity.sourceIp",
+                  "user-agent" : "$context.identity.userAgent",
+                  "account_id" : "$context.identity.accountId",
+                  "resourcePath":"$context.resourcePath",
+                  "responseStatus":"$context.status",
+                  "responseLatency":"$context.responseLatency",
+                  "integrationLatency":"$context.integrationLatency",
+                  "authorizer_integrationLatency":"$context.authorizer.integrationLatency",
+                  "$context.responseLength":"$context.responseLength"
+                }'
+      executionLogging: false
+  deploymentBucket:
+    name: ${param:deployment-bucket}
+    serverSideEncryption: AES256
+  iam:
+    deploymentRole: ${param:cfnRole, ''}
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+          Resource:
+            - "*"
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:CreateReadStream
+            - s3:CreateWriteStream
+            - s3:CopyObject
+            - s3:DeleteObject
+            - s3:PutObject
+            - s3:PutObjectAcl
+            - s3:PutObjectTagging
+            - s3:GetObjectTagging
+          Resource:
+            - "*"
+
+  environment:
+    SERVICE_NAME: ${self:service}
+    STAGE: ${sls:stage}
+    LOG_LEVEL: ${param:log-level}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    IMAGE_DESTINATION_BUCKET: ${param:output-bucket}
+
+functions:
+  convertFile:
+    handler: src/handler.convertFile
+    events:
+      - s3:
+          bucket: ${param:input-bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: jpeg-file-1
+            - suffix: .jpg
+
+resources: ${file(template.yml)}
+
+plugins:
+  - serverless-webpack
+  - serverless-plugin-tracing
