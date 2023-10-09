@@ -17,11 +17,12 @@ sls deploy --stage dev --param region=eu-central-1 --verbose
 ```
 
 # Clean up
-1. Run command:
+1. Empty input and output buckets
+2. Run command:
 ```shell
 sls remove --stage dev  --verbose
 ```
-2. Remove S3 bucket created for serverless
+3. Remove S3 bucket created for serverless
 
 # Results
 
