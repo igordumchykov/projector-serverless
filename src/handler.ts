@@ -13,6 +13,17 @@ const s3 = new AWS.S3()
 
 const { IMAGE_DESTINATION_BUCKET } = process.env
 
+const mimeTypes = [{
+    type: Jimp.MIME_BMP,
+    fileName: 'new-file.bmp'
+}, {
+    type: Jimp.MIME_PNG,
+    fileName: 'new-file.png'
+}, {
+    type: Jimp.MIME_GIF,
+    fileName: 'new-file.gif'
+}]
+
 export const convertFile = async (event: S3Event): Promise<void> => {
     const record = event.Records[0].s3
     const bucket = record.bucket.name
@@ -31,27 +42,13 @@ export const convertFile = async (event: S3Event): Promise<void> => {
 
     const img = await Jimp.create(response.Body as Buffer)
 
-    await s3
-        .putObject({
-            Bucket: IMAGE_DESTINATION_BUCKET,
-            Key: 'new-file.bmp',
-            Body: await img.getBufferAsync(Jimp.MIME_BMP)
-        })
-        .promise()
-
-    await s3
-        .putObject({
-            Bucket: IMAGE_DESTINATION_BUCKET,
-            Key: 'new-file.png',
-            Body: await img.getBufferAsync(Jimp.MIME_PNG)
-        })
-        .promise()
-
-    await s3
-        .putObject({
-            Bucket: IMAGE_DESTINATION_BUCKET,
-            Key: 'new-file.gif',
-            Body: await img.getBufferAsync(Jimp.MIME_GIF)
-        })
-        .promise()
+    await Promise.all(mimeTypes.map(async (i) => {
+        await s3
+            .putObject({
+                Bucket: IMAGE_DESTINATION_BUCKET,
+                Key: i.fileName,
+                Body: await img.getBufferAsync(i.type)
+            })
+            .promise()
+    }))
 }
